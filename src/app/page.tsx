@@ -1,19 +1,16 @@
-import  {prisma}  from "@/lib/db"; // adjust your import
-import { Button } from "@/components/ui/button";
+"use client";
+import { useTRPC } from "@/api/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 
-async function Home() {
-  const users = await prisma.user.findMany();
-
-  return (
-    <div className="text-red-500 items-center">
-      this is a new nextjs project. working on it,
-      <Button variant="link">Click me</Button>
-
-      <div className="mt-4 space-y-2">
-        {JSON.stringify(users,null,3)}
-      </div>
-    </div>
+const Page = () => {
+  const trpc = useTRPC();
+  const { data, error } = useQuery(
+    trpc.createAI.queryOptions({ text: "called from the client" })
   );
-}
+  console.log(data?.greeting);
+  if (error) return <div>Error: {error.message}</div>;
+  if (!data) return <div>Loading...</div>;
+  return <div>{JSON.stringify(data)}</div>;
+};
 
-export default Home
+export default Page;
